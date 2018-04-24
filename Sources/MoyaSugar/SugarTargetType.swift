@@ -16,9 +16,16 @@ public protocol SugarTargetType: TargetType {
   /// ```
   var route: Route { get }
   var parameters: Parameters? { get }
+  
+  var requestData: RequestData? { get }
+
 }
 
 public extension SugarTargetType {
+    
+  /// Provides stub data for use in testing.
+  var sampleData: Data { return Data() }
+    
   public var url: URL {
     return self.defaultURL
   }
@@ -36,7 +43,21 @@ public extension SugarTargetType {
   }
 
   public var task: Task {
-    guard let parameters = self.parameters else { return .requestPlain }
-    return .requestParameters(parameters: parameters.values, encoding: parameters.encoding)
+    if let data = self.requestData {
+        if let body = data.body?.jsonData {
+             return .requestCompositeData(bodyData: body, urlParameters: data.queryParams)
+        }
+    }
+    if let parameters = self.parameters {
+        return .requestParameters(parameters: parameters.values, encoding: parameters.encoding)
+    }
+    
+    return .requestPlain
   }
+}
+
+extension Encodable {
+    var jsonData: Data? {
+        return try? JSONEncoder().encode(self)
+    }
 }
