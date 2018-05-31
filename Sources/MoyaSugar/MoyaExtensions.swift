@@ -3,7 +3,7 @@ import Moya
 import RxSwift
 
 extension Response {
-    fileprivate func cast<T : Decodable>(_ to: T.Type, wrapped: Bool) -> T? {
+    public func cast<T : Decodable>(_ to: T.Type, wrapped: Bool) -> T? {
         let obj: T?
 
         if wrapped {
