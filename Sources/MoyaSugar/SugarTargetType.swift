@@ -46,8 +46,7 @@ public extension SugarTargetType {
     if let data = self.requestData {
         if let body = data.body?.jsonData {
              return .requestCompositeData(bodyData: body, urlParameters: data.queryParams)
-        }
-        if let parameters = data.queryParams {
+        } else {
             return .requestParameters(parameters: data.queryParams, encoding: data.queryParamsEncoding)
         }
     }
